@@ -1,0 +1,7 @@
+.DS_Store
+.build/
+.swiftpm/
+DroidBridge.app/
+*.xcodeproj/xcuserdata/
+xcuserdata/
+DerivedData/

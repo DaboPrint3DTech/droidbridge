@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#bfe9ff"/>
+      <stop offset="0.65" stop-color="#e4fbe9"/>
+      <stop offset="1" stop-color="#fff1d6"/>
+    </linearGradient>
+    <linearGradient id="silver" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f9fafc"/>
+      <stop offset="1" stop-color="#c3cbd4"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7cd0ff"/>
+      <stop offset="1" stop-color="#b8ecff"/>
+    </linearGradient>
+    <linearGradient id="phoneBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3f5766"/>
+      <stop offset="1" stop-color="#24333c"/>
+    </linearGradient>
+    <linearGradient id="phoneScreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6ff0a8"/>
+      <stop offset="1" stop-color="#1fb463"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7f9fb"/>
+      <stop offset="1" stop-color="#a9b4bf"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#0b2a3a" flood-opacity="0.3"/>
+    </filter>
+    <clipPath id="screenClip"><rect x="426" y="262" width="416" height="250" rx="20"/></clipPath>
+    <path id="spark" d="M0 -22 Q0 0 22 0 Q0 0 0 22 Q0 0 -22 0 Q0 0 0 -22Z"/>
+    <path id="heart" d="M0 10 C-24 -8 -16 -28 0 -16 C16 -28 24 -8 0 10Z"/>
+  </defs>
+
+  <!-- fondo dell'icona -->
+  <rect x="100" y="100" width="824" height="824" rx="190" fill="url(#bg)" filter="url(#shadow)"/>
+  <rect x="104" y="104" width="816" height="816" rx="186" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="4"/>
+  <ellipse cx="512" cy="812" rx="330" ry="46" fill="#bfe8c9" opacity="0.75"/>
+
+  <g transform="translate(0 40)">
+    <!-- ombre -->
+    <ellipse cx="634" cy="730" rx="205" ry="18" fill="#1f3d2f" opacity="0.22"/>
+    <ellipse cx="260" cy="712" rx="115" ry="10" fill="#1f3d2f" opacity="0.15"/>
+
+    <!-- iMac: collo, base, corpo -->
+    <path d="M596 600 L672 600 L696 700 L572 700 Z" fill="url(#silver)" stroke="#9aa5b1" stroke-width="5" stroke-linejoin="round"/>
+    <rect x="534" y="692" width="200" height="32" rx="16" fill="url(#silver)" stroke="#9aa5b1" stroke-width="5"/>
+    <rect x="404" y="240" width="460" height="370" rx="42" fill="url(#silver)" stroke="#9aa5b1" stroke-width="6"/>
+    <circle cx="634" cy="251" r="4.5" fill="#8a96a3"/>
+
+    <!-- schermo dell'iMac -->
+    <rect x="426" y="262" width="416" height="250" rx="20" fill="url(#screen)" stroke="#7aa6c0" stroke-width="4"/>
+    <g clip-path="url(#screenClip)">
+      <path d="M426 262 L590 262 L480 512 L426 512 Z" fill="#ffffff" opacity="0.18"/>
+    </g>
+
+    <!-- faccina dell'iMac -->
+    <g fill="none" stroke="#123a52" stroke-width="9" stroke-linecap="round">
+      <path d="M552 386 Q574 358 596 386"/>
+      <path d="M672 386 Q694 358 716 386"/>
+    </g>
+    <ellipse cx="545" cy="434" rx="24" ry="13" fill="#ff9ab0" opacity="0.85"/>
+    <ellipse cx="723" cy="434" rx="24" ry="13" fill="#ff9ab0" opacity="0.85"/>
+    <path d="M604 422 Q634 466 664 422 Z" fill="#123a52"/>
+    <ellipse cx="634" cy="445" rx="12" ry="7" fill="#ff7f8f"/>
+
+    <!-- porta sul lato dell'iMac -->
+    <rect x="398" y="394" width="40" height="44" rx="12" fill="#56626d"/>
+    <rect x="404" y="400" width="34" height="32" rx="9" fill="#1d252b"/>
+
+    <!-- connettore -->
+    <rect x="366" y="398" width="64" height="36" rx="18" fill="url(#metal)" stroke="#7d8a97" stroke-width="4"/>
+    <rect x="382" y="412" width="34" height="8" rx="4" fill="#47525e"/>
+
+    <!-- smartphone -->
+    <rect x="290" y="330" width="36" height="8" rx="4" fill="#1c2a33"/>
+    <rect x="140" y="336" width="240" height="160" rx="40" fill="url(#phoneBody)" stroke="#1c2a33" stroke-width="6"/>
+    <rect x="168" y="350" width="196" height="132" rx="22" fill="url(#phoneScreen)"/>
+    <rect x="180" y="358" width="150" height="17" rx="8.5" fill="#ffffff" opacity="0.35"/>
+    <circle cx="153" cy="416" r="6.5" fill="#0e1519"/>
+    <circle cx="151" cy="414" r="2.2" fill="#ffffff" opacity="0.6"/>
+
+    <!-- faccina dello smartphone -->
+    <g fill="#1d2b24">
+      <circle cx="228" cy="402" r="11"/>
+      <circle cx="304" cy="402" r="11"/>
+    </g>
+    <g fill="#ffffff">
+      <circle cx="231" cy="399" r="3.5"/>
+      <circle cx="307" cy="399" r="3.5"/>
+    </g>
+    <ellipse cx="200" cy="432" rx="14" ry="8" fill="#ff8fa3" opacity="0.8"/>
+    <ellipse cx="332" cy="432" rx="14" ry="8" fill="#ff8fa3" opacity="0.8"/>
+    <path d="M246 430 Q266 453 286 430" stroke="#1d2b24" stroke-width="6.5" stroke-linecap="round" fill="none"/>
+
+    <!-- scintille -->
+    <use href="#spark" x="392" y="350" fill="#ffc933"/>
+    <g transform="translate(398 490) scale(0.6)"><use href="#spark" fill="#ffffff"/></g>
+  </g>
+
+  <!-- cuoricini -->
+  <g transform="translate(845 215)"><use href="#heart" fill="#ff6b8b"/></g>
+  <g transform="translate(895 270) scale(0.7)"><use href="#heart" fill="#ff8fa3"/></g>
+</svg>
