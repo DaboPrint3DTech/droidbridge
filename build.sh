@@ -16,7 +16,7 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 <plist version="1.0">
 <dict>
     <key>CFBundleExecutable</key><string>DroidBridge</string>
-    <key>CFBundleIdentifier</key><string>com.example.droidbridge</string>
+    <key>CFBundleIdentifier</key><string>com.daboPrint3dtech.droidbridge</string>
     <key>CFBundleName</key><string>DroidBridge</string>
     <key>CFBundleDisplayName</key><string>DroidBridge</string>
     <key>CFBundleIconFile</key><string>AppIcon</string>
