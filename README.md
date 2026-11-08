@@ -1,15 +1,15 @@
 # DroidBridge
 
-App nativa per macOS (SwiftUI) per sfogliare lo storage di un telefono Android e trasferire file da e verso il Mac.
+A native macOS app (SwiftUI) to browse an Android phone's storage and transfer files to and from your Mac.
 
-## Requisiti
+## Requirements
 
-- macOS 13 o successivo
-- Xcode oppure Command Line Tools (`xcode-select --install`)
-- adb: `brew install android-platform-tools` (oppure le Platform-Tools di Google, con `adb` copiato in `/usr/local/bin`)
-- Sul telefono: Opzioni sviluppatore → **Debug USB** attivo
+- macOS 13 or later
+- Xcode or the Command Line Tools (`xcode-select --install`)
+- adb: `brew install android-platform-tools` (or Google's Platform-Tools, with `adb` copied to `/usr/local/bin`)
+- On the phone: Developer options → **USB debugging** turned on
 
-## Compilare e avviare
+## Build and run
 
 ```bash
 git clone https://github.com/DaboPrint3DTech/droidbridge.git
@@ -19,11 +19,11 @@ chmod +x build.sh
 open DroidBridge.app
 ```
 
-In alternativa: `swift run` dalla cartella del progetto.
+Alternatively: `swift run` from the project folder.
 
-## Installare l'app (Launchpad, Dock, Spotlight)
+## Install the app (Launchpad, Dock, Spotlight)
 
-`build.sh` crea `DroidBridge.app` nella cartella del progetto. Per averla nel Launchpad come le altre app, copiala in `/Applications`:
+`build.sh` creates `DroidBridge.app` in the project folder. To have it in Launchpad like any other app, copy it to `/Applications`:
 
 ```bash
 ./build.sh
@@ -31,66 +31,66 @@ rm -rf /Applications/DroidBridge.app
 ditto DroidBridge.app /Applications/DroidBridge.app
 ```
 
-Dopo qualche secondo DroidBridge compare nel Launchpad; si trova anche con Spotlight (⌘-spazio, "DroidBridge"). Per tenerla nel Dock: aprila, clic destro sull'icona nel Dock → Opzioni → Mantieni nel Dock.
+After a few seconds DroidBridge shows up in Launchpad; you can also find it with Spotlight (⌘-Space, "DroidBridge"). To keep it in the Dock: open it, right-click its Dock icon → Options → Keep in Dock.
 
-Se l'icona non compare subito, forza la registrazione dell'app:
+If the icon does not appear right away, force the app to register:
 
 ```bash
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/DroidBridge.app
 ```
 
-**Aggiornare:** dopo ogni modifica al codice la copia in `/Applications` non cambia da sola. Rilancia i tre comandi sopra (compila, rimuovi la vecchia, copia la nuova).
+**Updating:** the copy in `/Applications` does not change on its own after you edit the code. Run the three commands above again (build, remove the old copy, copy the new one).
 
-**Disinstallare:** `rm -rf /Applications/DroidBridge.app` (le miniature in cache restano in `~/Library/Caches/DroidBridge`, cancellabili a mano).
+**Uninstalling:** `rm -rf /Applications/DroidBridge.app` (cached thumbnails stay in `~/Library/Caches/DroidBridge` and can be deleted by hand).
 
-L'app è firmata ad-hoc, quindi è pensata per il Mac su cui la compili. Se la copi su un altro Mac, al primo avvio macOS può bloccarla: clic destro sull'app → Apri, oppure Impostazioni di Sistema → Privacy e sicurezza → Apri comunque.
+The app is ad-hoc signed, so it is meant for the Mac you build it on. If you copy it to another Mac, macOS may block it on first launch: right-click the app → Open, or System Settings → Privacy & Security → Open Anyway.
 
-## Uso
+## Usage
 
-1. Collega il telefono via USB e accetta la richiesta di debug USB.
-2. Il dispositivo appare nella barra laterale.
-3. Doppio clic su una cartella per aprirla. Doppio clic su un'immagine per vederla in galleria, su altri file per scaricarli in Download.
-4. Trascina file nella finestra per inviarli al telefono; la barra degli strumenti permette di scaricare, creare cartelle ed eliminare, il menu contestuale (clic destro) di rinominare.
+1. Connect the phone over USB and accept the USB debugging prompt.
+2. The device appears in the sidebar.
+3. Double-click a folder to open it. Double-click an image to view it in the gallery, or any other file to download it to Downloads.
+4. Drag files into the window to send them to the phone; the toolbar lets you download, create folders and delete, and the context menu (right-click) lets you rename.
 
-### Albero delle cartelle
+### Folder tree
 
-Sotto il nome del telefono, nella barra laterale, c'è l'alberatura della memoria interna. Un clic su una cartella la apre nel pannello principale. La freccia a sinistra espande o chiude i rami: le sottocartelle vengono lette dal telefono solo quando servono. Navigando dal pannello principale (doppio clic, "cartella superiore"), l'albero si apre da solo fino alla cartella in cui ti trovi, che resta evidenziata.
+Under the phone's name in the sidebar there is the tree of the internal storage. Clicking a folder opens it in the main pane. The arrow on the left expands or collapses a branch: subfolders are read from the phone only when needed. When you navigate from the main pane (double-click, "Enclosing folder"), the tree opens by itself down to the folder you are in, which stays highlighted.
 
-### Informazioni sull'app
+### About the app
 
-In fondo alla barra laterale c'è la voce "Informazioni su DroidBridge", disponibile anche dal menu dell'app. Mostra versione, creatore, versione e percorso di adb e il sistema operativo. I dati dell'app (creatore, anno, descrizione) sono tutti in `Sources/DroidBridge/AppInfo.swift`; la versione si cambia in `build.sh`.
+At the bottom of the sidebar there is "About DroidBridge", also available from the app menu. It shows the version, creator, adb version and path, and the operating system. The app's details (creator, year, description) are all in `Sources/DroidBridge/AppInfo.swift`; the version is set in `build.sh`.
 
-### Logo e icona
+### Logo and icon
 
-Il logo (uno smartphone che si collega a un iMac) è in `Resources/AppIcon.png` (1024×1024) con il sorgente vettoriale `Resources/AppIcon.svg`. `build.sh` lo trasforma in `AppIcon.icns` e lo mette nel pacchetto, quindi compare nel Dock, nel Finder, nella finestra Informazioni e nella schermata "Collega il tuo telefono". Per cambiarlo basta sostituire `AppIcon.png` con un'altra immagine quadrata da 1024 px e rilanciare `./build.sh`. Con `swift run` l'app non è un pacchetto e mostra l'icona generica.
+The logo (a smartphone connecting to an iMac) is in `Resources/AppIcon.png` (1024×1024), with the vector source in `Resources/AppIcon.svg`. `build.sh` turns it into `AppIcon.icns` and puts it in the bundle, so it shows in the Dock, in Finder, in the About window and on the "Connect your Android phone" screen. To change it, replace `AppIcon.png` with another 1024 px square image and run `./build.sh` again. With `swift run` the app is not a bundle and shows the generic icon.
 
-### Viste
+### Views
 
-Il selettore nella barra degli strumenti cambia vista:
+The picker in the toolbar switches the view:
 
-- **Lista**: tabella con Nome, Dimensione, Tipo, Modificato. Le immagini hanno una piccola miniatura accanto al nome.
-- **Griglia**: icone grandi con anteprima delle immagini. Lo slider in basso regola la dimensione. ⌘-clic aggiunge o toglie dalla selezione, ⇧-clic seleziona un intervallo.
-- **Galleria**: immagine grande al centro, striscia di miniature sotto. Frecce ← → (o i pulsanti ai lati) per scorrere le immagini; clic su una miniatura per saltarci.
+- **List**: a table with Name, Size, Kind, Modified. Images get a small thumbnail next to the name.
+- **Grid**: large icons with image previews. The slider at the bottom sets the size. ⌘-click adds to or removes from the selection, ⇧-click selects a range.
+- **Gallery**: a large image in the middle with a thumbnail strip below. Use the ← → arrows (or the buttons on the sides) to move between images; click a thumbnail to jump to it.
 
-L'interruttore "Anteprime" in basso disattiva le miniature in lista e griglia.
+The "Previews" switch at the bottom turns off thumbnails in the list and grid.
 
-### Filtro e ordinamento
+### Filtering and sorting
 
-- Il campo di ricerca nella barra degli strumenti filtra per nome.
-- Il menu "Filtra per tipo" mostra solo cartelle, immagini, video, audio, documenti o altri file.
-- In lista, un clic sull'intestazione di una colonna ordina per quella colonna, un secondo clic inverte il verso.
-- Il menu "Ordina" fa lo stesso in tutte le viste e permette di tenere o no le cartelle per prime.
-- Le azioni (scarica, elimina, rinomina) agiscono solo sugli elementi visibili: quello che è nascosto da un filtro non viene toccato.
+- The search field in the toolbar filters by name.
+- The "Filter by Kind" menu shows only folders, images, videos, audio, documents or other files.
+- In the list, clicking a column header sorts by that column; clicking again reverses the order.
+- The "Sort" menu does the same in every view and lets you choose whether folders come first.
+- Actions (download, delete, rename) only affect visible items: anything hidden by a filter is left untouched.
 
-### Anteprime e cache
+### Previews and cache
 
-Per fare un'anteprima l'app scarica l'immagine dal telefono, la ridimensiona e conserva solo la miniatura in `~/Library/Caches/DroidBridge`. Le anteprime si generano solo per ciò che è visibile sullo schermo. Dal menu in basso a destra (⋯) puoi svuotare la cache.
+To make a preview, the app downloads the image from the phone, resizes it and keeps only the thumbnail in `~/Library/Caches/DroidBridge`. Previews are generated only for what is visible on screen. You can clear the cache from the menu at the bottom right (⋯).
 
-## Limiti
+## Limitations
 
-- Usa ADB, non MTP: serve il Debug USB attivo.
-- Non monta il telefono come unità nel Finder.
-- Il trascinamento dalla finestra al Finder non è implementato: usa "Scarica".
-- Il progresso dei trasferimenti è indeterminato (spinner).
-- Le anteprime ci sono solo per le immagini: per i video si vede l'icona.
-- Cartelle con molte foto grandi richiedono tempo alla prima apertura, perché ogni foto va scaricata una volta per ricavarne la miniatura.
+- Uses ADB, not MTP: USB debugging must be on.
+- Does not mount the phone as a drive in Finder.
+- Dragging from the window to Finder is not implemented: use "Download".
+- Transfer progress is indeterminate (spinner).
+- Previews exist only for images: videos show an icon.
+- Folders with many large photos take a while the first time they open, because each photo has to be downloaded once to make its thumbnail.

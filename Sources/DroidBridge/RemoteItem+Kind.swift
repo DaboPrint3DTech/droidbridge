@@ -7,7 +7,7 @@ enum FileKind {
 extension RemoteItem {
     var ext: String { (name as NSString).pathExtension.lowercased() }
 
-    /// Chiave di ordinamento per nome, senza distinzione tra maiuscole e minuscole.
+    /// Case-insensitive sort key for the name.
     var sortName: String { name.lowercased() }
 
     var kind: FileKind {
@@ -27,7 +27,7 @@ extension RemoteItem {
     }
 
     var typeLabel: String {
-        if isDirectory { return "Cartella" }
+        if isDirectory { return "Folder" }
         return ext.isEmpty ? "File" : ext.uppercased()
     }
 
@@ -50,13 +50,13 @@ enum ItemFilter: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .all: return "Tutti"
-        case .folders: return "Cartelle"
-        case .images: return "Immagini"
-        case .videos: return "Video"
+        case .all: return "All"
+        case .folders: return "Folders"
+        case .images: return "Images"
+        case .videos: return "Videos"
         case .audio: return "Audio"
-        case .documents: return "Documenti"
-        case .other: return "Altri file"
+        case .documents: return "Documents"
+        case .other: return "Other files"
         }
     }
 
@@ -80,9 +80,9 @@ enum ViewMode: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .list: return "Lista"
-        case .grid: return "Griglia"
-        case .gallery: return "Galleria"
+        case .list: return "List"
+        case .grid: return "Grid"
+        case .gallery: return "Gallery"
         }
     }
 

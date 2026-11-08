@@ -6,7 +6,7 @@ struct AboutView: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            // Il logo dell'app (AppIcon.icns, generato da Resources/AppIcon.png in build.sh)
+            // The app logo (AppIcon.icns, generated from Resources/AppIcon.png by build.sh)
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
                 .scaledToFit()
@@ -15,7 +15,7 @@ struct AboutView: View {
             VStack(spacing: 4) {
                 Text(AppInfo.name)
                     .font(.title.bold())
-                Text("Versione \(AppInfo.versionString)")
+                Text("Version \(AppInfo.versionString)")
                     .foregroundStyle(.secondary)
             }
 
@@ -26,9 +26,9 @@ struct AboutView: View {
             Divider()
 
             Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 6) {
-                infoRow("Creatore", AppInfo.creator)
+                infoRow("Creator", AppInfo.creator)
                 infoRow("Android Debug Bridge", adbVersion)
-                infoRow("Percorso adb", ADB.executablePath ?? "non trovato")
+                infoRow("adb path", ADB.executablePath ?? "not found")
                 infoRow("macOS", ProcessInfo.processInfo.operatingSystemVersionString)
             }
 

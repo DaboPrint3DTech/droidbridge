@@ -27,10 +27,10 @@ struct RemoteItem: Identifiable, Hashable {
     var id: String { path }
 }
 
-/// Wrapper attorno all'eseguibile `adb` (Android Debug Bridge).
+/// Wrapper around the `adb` executable (Android Debug Bridge).
 enum ADB {
 
-    // MARK: - Ricerca di adb
+    // MARK: - Locating adb
 
     static var executablePath: String? {
         var candidates: [String] = []
@@ -45,12 +45,12 @@ enum ADB {
         return candidates.first { FileManager.default.isExecutableFile(atPath: $0) }
     }
 
-    // MARK: - Esecuzione
+    // MARK: - Running
 
     @discardableResult
     static func run(_ arguments: [String]) async throws -> String {
         guard let path = executablePath else {
-            throw ADBError(message: "adb non trovato. Installalo con: brew install android-platform-tools")
+            throw ADBError(message: "adb not found. Install it with: brew install android-platform-tools")
         }
         return try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {
@@ -77,7 +77,7 @@ enum ADB {
                     continuation.resume(returning: out)
                 } else {
                     let text = (err.isEmpty ? out : err).trimmingCharacters(in: .whitespacesAndNewlines)
-                    continuation.resume(throwing: ADBError(message: text.isEmpty ? "adb ha restituito un errore" : text))
+                    continuation.resume(throwing: ADBError(message: text.isEmpty ? "adb returned an error" : text))
                 }
             }
         }
@@ -87,7 +87,7 @@ enum ADB {
         "'" + s.replacingOccurrences(of: "'", with: "'\\''") + "'"
     }
 
-    // MARK: - Dispositivi
+    // MARK: - Devices
 
     static func devices() async throws -> [AndroidDevice] {
         let output = try await run(["devices", "-l"])
@@ -117,8 +117,8 @@ enum ADB {
         var items: [RemoteItem] = []
         for raw in output.split(whereSeparator: \.isNewline) {
             let line = String(raw)
-            guard let first = line.first, "dlcbps-".contains(first) else { continue } // salta "total N"
-            // permessi, link, utente, gruppo, dimensione, data, ora, nome
+            guard let first = line.first, "dlcbps-".contains(first) else { continue } // skip "total N"
+            // permissions, links, user, group, size, date, time, name
             let parts = line.split(separator: " ", maxSplits: 7, omittingEmptySubsequences: true)
             guard parts.count == 8 else { continue }
             var name = String(parts[7])

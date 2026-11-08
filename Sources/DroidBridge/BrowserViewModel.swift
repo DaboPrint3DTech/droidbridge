@@ -1,7 +1,7 @@
 import SwiftUI
 import AppKit
 
-/// Una riga dell'albero delle cartelle mostrato nella barra laterale.
+/// A row of the folder tree shown in the sidebar.
 struct TreeRow: Identifiable, Hashable {
     let path: String
     let name: String
@@ -24,13 +24,13 @@ final class BrowserViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var adbMissing = false
 
-    // Albero delle cartelle (barra laterale)
+    // Folder tree (sidebar)
     let treeRoot = "/sdcard"
     @Published var expandedPaths = Set<String>()
     @Published var treeChildren: [String: [RemoteItem]] = [:]
     @Published var loadingTreePaths = Set<String>()
 
-    // Vista, filtri e ordinamento
+    // View, filters and sorting
     @Published var viewMode: ViewMode = .list
     @Published var showPreview = true
     @Published var thumbSize: Double = 130
@@ -45,7 +45,7 @@ final class BrowserViewModel: ObservableObject {
         devices.first { $0.serial == selectedSerial }
     }
 
-    /// Elementi visibili dopo filtro, ricerca e ordinamento.
+    /// Items visible after filtering, searching and sorting.
     var displayedItems: [RemoteItem] {
         var result = items.filter { filter.matches($0) }
         let query = searchText.trimmingCharacters(in: .whitespaces)
@@ -59,8 +59,8 @@ final class BrowserViewModel: ObservableObject {
         return result
     }
 
-    /// Solo gli elementi selezionati che sono anche visibili: le azioni (elimina, scarica…)
-    /// non toccano mai file nascosti dal filtro.
+    /// Only the selected items that are also visible: actions (delete, download…)
+    /// never touch files hidden by the filter.
     var selectedItems: [RemoteItem] {
         displayedItems.filter { selection.contains($0.id) }
     }
@@ -71,7 +71,7 @@ final class BrowserViewModel: ObservableObject {
         if pruned != selection { selection = pruned }
     }
 
-    // MARK: - Ordinamento
+    // MARK: - Sorting
 
     func isSorted(by keyPath: PartialKeyPath<RemoteItem>) -> Bool {
         guard let first = sortOrder.first else { return false }
@@ -82,7 +82,7 @@ final class BrowserViewModel: ObservableObject {
         sortOrder.first?.order != .reverse
     }
 
-    /// Ordina per la colonna indicata; se è già quella attiva inverte il verso.
+    /// Sorts by the given column; if it is already active, reverses the order.
     func sort<V: Comparable>(by keyPath: KeyPath<RemoteItem, V>) {
         if isSorted(by: keyPath) {
             sortOrder = [KeyPathComparator(keyPath, order: sortAscending ? .reverse : .forward)]
@@ -91,9 +91,9 @@ final class BrowserViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Galleria
+    // MARK: - Gallery
 
-    /// Elemento mostrato in grande: il file selezionato, altrimenti la prima immagine.
+    /// Item shown large: the selected file, otherwise the first image.
     var galleryItem: RemoteItem? {
         let shown = displayedItems
         if let selected = shown.first(where: { selection.contains($0.id) && !$0.isDirectory }) {
@@ -114,7 +114,7 @@ final class BrowserViewModel: ObservableObject {
         Task { await RemoteImageLoader.shared.clearCache() }
     }
 
-    // MARK: - Avvio e polling dei dispositivi
+    // MARK: - Startup and device polling
 
     func start() {
         adbMissing = ADB.executablePath == nil
@@ -145,21 +145,21 @@ final class BrowserViewModel: ObservableObject {
 
     func select(_ serial: String?) {
         guard serial != selectedSerial else { return }
-        // Ignora i dispositivi non pronti (es. "unauthorized")
+        // Ignore devices that are not ready (e.g. "unauthorized")
         if let serial, !devices.contains(where: { $0.serial == serial && $0.isReady }) { return }
         selectedSerial = serial
         items = []
         selection = []
         resetTree()
         if serial != nil {
-            // load() riempie anche la radice dell'albero e la espande.
+            // load() also fills the tree root and expands it.
             load(treeRoot)
         }
     }
 
-    // MARK: - Albero delle cartelle
+    // MARK: - Folder tree
 
-    /// Righe visibili dell'albero, già "appiattite" con il livello di rientro.
+    /// Visible tree rows, already flattened with their indent level.
     var treeRows: [TreeRow] {
         var rows: [TreeRow] = []
 
@@ -172,7 +172,7 @@ final class BrowserViewModel: ObservableObject {
                 depth: depth,
                 isExpanded: expanded,
                 isLoading: loadingTreePaths.contains(path),
-                // Finché non sappiamo cosa c'è dentro, la freccia resta visibile.
+                // Until we know what is inside, the disclosure arrow stays visible.
                 canExpand: known == nil || !(known?.isEmpty ?? true)
             ))
             if expanded, let children = known {
@@ -182,7 +182,7 @@ final class BrowserViewModel: ObservableObject {
             }
         }
 
-        add(path: treeRoot, name: "Memoria interna", depth: 0)
+        add(path: treeRoot, name: "Internal storage", depth: 0)
         return rows
     }
 
@@ -201,7 +201,7 @@ final class BrowserViewModel: ObservableObject {
         }
     }
 
-    /// Legge le sottocartelle di `path` (una sola volta, poi restano in memoria).
+    /// Reads the subfolders of `path` (only once, then they stay in memory).
     func loadTreeChildren(_ path: String) {
         guard let serial = selectedSerial,
               treeChildren[path] == nil,
@@ -214,13 +214,13 @@ final class BrowserViewModel: ObservableObject {
             if let listing {
                 treeChildren[path] = listing.filter { $0.isDirectory }
             } else {
-                // Cartella non leggibile (permessi): si richiude e si potrà riprovare.
+                // Unreadable folder (permissions): collapse it so it can be retried.
                 expandedPaths.remove(path)
             }
         }
     }
 
-    /// Espande l'albero fino alla cartella indicata, così si vede dove ci si trova.
+    /// Expands the tree down to the given folder, so you can see where you are.
     func revealInTree(_ target: String) {
         guard target == treeRoot || target.hasPrefix(treeRoot + "/") else { return }
         var current = treeRoot
@@ -236,20 +236,20 @@ final class BrowserViewModel: ObservableObject {
         }
     }
 
-    /// Rilegge la cartella e tiene allineato anche l'albero.
+    /// Reloads the folder and keeps the tree in sync.
     private func reloadItems(serial: String, path target: String) async throws {
         let result = try await ADB.list(serial: serial, path: target)
         treeChildren[target] = result.filter { $0.isDirectory }
         if target == path { items = result }
     }
 
-    // MARK: - Navigazione
+    // MARK: - Navigation
 
     func load(_ newPath: String? = nil) {
         guard let serial = selectedSerial else { return }
         let target = newPath ?? path
         Task {
-            await perform("Caricamento…") {
+            await perform("Loading…") {
                 let result = try await ADB.list(serial: serial, path: target)
                 if target != self.path { self.searchText = "" }
                 self.path = target
@@ -273,7 +273,7 @@ final class BrowserViewModel: ObservableObject {
         if item.isDirectory {
             load(item.path)
         } else if item.kind == .image {
-            // Le immagini si aprono nella galleria; per salvarle si usa "Scarica".
+            // Images open in the gallery; use "Download" to save them.
             if viewMode != .gallery {
                 selection = [item.id]
                 viewMode = .gallery
@@ -284,7 +284,7 @@ final class BrowserViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Trasferimenti
+    // MARK: - Transfers
 
     func downloadSelectionWithPanel() {
         let chosen = selectedItems
@@ -293,7 +293,7 @@ final class BrowserViewModel: ObservableObject {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.canCreateDirectories = true
-        panel.prompt = "Scarica qui"
+        panel.prompt = "Download Here"
         guard panel.runModal() == .OK, let dir = panel.url else { return }
         download(chosen, to: dir, revealInFinder: true)
     }
@@ -301,7 +301,7 @@ final class BrowserViewModel: ObservableObject {
     func download(_ chosen: [RemoteItem], to directory: URL, revealInFinder: Bool) {
         guard let serial = selectedSerial else { return }
         Task {
-            await perform("Download in corso…") {
+            await perform("Downloading…") {
                 for item in chosen {
                     try await ADB.pull(serial: serial, remote: item.path, to: directory)
                 }
@@ -319,7 +319,7 @@ final class BrowserViewModel: ObservableObject {
         panel.canChooseFiles = true
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = true
-        panel.prompt = "Invia al telefono"
+        panel.prompt = "Send to Phone"
         guard panel.runModal() == .OK else { return }
         upload(panel.urls)
     }
@@ -328,7 +328,7 @@ final class BrowserViewModel: ObservableObject {
         guard let serial = selectedSerial, !urls.isEmpty else { return }
         let destination = path
         Task {
-            await perform("Upload in corso…") {
+            await perform("Uploading…") {
                 for url in urls {
                     try await ADB.push(serial: serial, local: url, toRemoteDirectory: destination)
                 }
@@ -337,7 +337,7 @@ final class BrowserViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Operazioni sui file
+    // MARK: - File operations
 
     func deleteSelection() {
         let chosen = selectedItems
@@ -345,17 +345,17 @@ final class BrowserViewModel: ObservableObject {
 
         let alert = NSAlert()
         alert.messageText = chosen.count == 1
-            ? "Eliminare “\(chosen[0].name)”?"
-            : "Eliminare \(chosen.count) elementi?"
-        alert.informativeText = "L'operazione è definitiva: i file non vanno nel cestino del telefono."
+            ? "Delete “\(chosen[0].name)”?"
+            : "Delete \(chosen.count) items?"
+        alert.informativeText = "This cannot be undone: the files are not moved to the phone's trash."
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Elimina")
-        alert.addButton(withTitle: "Annulla")
+        alert.addButton(withTitle: "Delete")
+        alert.addButton(withTitle: "Cancel")
         guard alert.runModal() == .alertFirstButtonReturn else { return }
 
         let current = path
         Task {
-            await perform("Eliminazione…") {
+            await perform("Deleting…") {
                 for item in chosen {
                     try await ADB.delete(serial: serial, remote: item.path)
                 }
@@ -367,11 +367,11 @@ final class BrowserViewModel: ObservableObject {
 
     func newFolder() {
         guard let serial = selectedSerial else { return }
-        guard let name = promptForText(title: "Nuova cartella", message: "Nome della cartella:", initial: "") else { return }
+        guard let name = promptForText(title: "New Folder", message: "Folder name:", initial: "") else { return }
         let current = path
         let full = (current.hasSuffix("/") ? current : current + "/") + name
         Task {
-            await perform("Creazione cartella…") {
+            await perform("Creating folder…") {
                 try await ADB.makeDirectory(serial: serial, remote: full)
                 try await self.reloadItems(serial: serial, path: current)
             }
@@ -381,13 +381,13 @@ final class BrowserViewModel: ObservableObject {
     func renameSelection() {
         let chosen = selectedItems
         guard let serial = selectedSerial, chosen.count == 1, let item = chosen.first else { return }
-        guard let newName = promptForText(title: "Rinomina", message: "Nuovo nome:", initial: item.name),
+        guard let newName = promptForText(title: "Rename", message: "New name:", initial: item.name),
               newName != item.name else { return }
         let current = path
         let parent = (item.path as NSString).deletingLastPathComponent
         let target = (parent.hasSuffix("/") ? parent : parent + "/") + newName
         Task {
-            await perform("Rinomina…") {
+            await perform("Renaming…") {
                 try await ADB.rename(serial: serial, from: item.path, to: target)
                 try await self.reloadItems(serial: serial, path: current)
                 self.selection = []
@@ -395,14 +395,14 @@ final class BrowserViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Utilità
+    // MARK: - Utilities
 
     private func promptForText(title: String, message: String, initial: String) -> String? {
         let alert = NSAlert()
         alert.messageText = title
         alert.informativeText = message
         alert.addButton(withTitle: "OK")
-        alert.addButton(withTitle: "Annulla")
+        alert.addButton(withTitle: "Cancel")
         let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 280, height: 24))
         field.stringValue = initial
         alert.accessoryView = field

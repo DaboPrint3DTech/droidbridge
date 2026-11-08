@@ -13,15 +13,15 @@ struct DroidBridgeApp: App {
                 .frame(minWidth: 820, minHeight: 500)
         }
         .commands {
-            // Sostituisce la voce standard "Informazioni su…" del menu dell'app.
+            // Replaces the standard "About…" item in the app menu.
             CommandGroup(replacing: .appInfo) {
-                Button("Informazioni su \(AppInfo.name)") {
+                Button("About \(AppInfo.name)") {
                     openWindow(id: "about")
                 }
             }
         }
 
-        Window("Informazioni su \(AppInfo.name)", id: "about") {
+        Window("About \(AppInfo.name)", id: "about") {
             AboutView()
         }
         .windowResizability(.contentSize)

@@ -1,14 +1,14 @@
 import Foundation
 
-/// Dati mostrati nella finestra "Informazioni". Per cambiarli basta modificare questo file.
+/// Data shown in the "About" window. Edit this file to change it.
 enum AppInfo {
     static let name = "DroidBridge"
     static let creator = "Davide Bossi"
     static let year = "2026"
-    static let summary = "Sfoglia e trasferisci file tra il Mac e un telefono Android tramite ADB."
-    static let disclaimer = "DroidBridge è un progetto indipendente: non è affiliato a MacDroid, Google o Android."
+    static let summary = "Browse and transfer files between your Mac and an Android phone over ADB."
+    static let disclaimer = "DroidBridge is an independent project, not affiliated with MacDroid, Google or Android."
 
-    // Usati solo quando l'app gira senza essere impacchettata (swift run).
+    // Used only when the app runs unbundled (swift run).
     private static let fallbackVersion = "1.2"
     private static let fallbackBuild = "3"
 
@@ -24,15 +24,15 @@ enum AppInfo {
 
     static var copyright: String { "© \(year) \(creator)" }
 
-    /// Versione di adb installata sul Mac, ricavata da `adb version`.
+    /// Version of adb installed on the Mac, read from `adb version`.
     static func adbVersion() async -> String {
-        guard let output = try? await ADB.run(["version"]) else { return "non disponibile" }
+        guard let output = try? await ADB.run(["version"]) else { return "not available" }
         let lines = output.split(whereSeparator: \.isNewline).map(String.init)
         let main = (lines.first ?? "")
             .replacingOccurrences(of: "Android Debug Bridge version ", with: "")
         if let detail = lines.first(where: { $0.hasPrefix("Version ") }) {
             return "\(main) (\(detail.replacingOccurrences(of: "Version ", with: "")))"
         }
-        return main.isEmpty ? "non disponibile" : main
+        return main.isEmpty ? "not available" : main
     }
 }

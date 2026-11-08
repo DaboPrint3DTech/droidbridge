@@ -6,5 +6,5 @@ DroidBridge.app/
 xcuserdata/
 DerivedData/
 
-# Materiale promozionale (video, script per i video): solo in locale
+# Promotional material (videos, video scripts): kept local only
 promo/

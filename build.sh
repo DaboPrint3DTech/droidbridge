@@ -1,5 +1,5 @@
 #!/bin/bash
-# Compila DroidBridge e crea DroidBridge.app nella cartella corrente.
+# Builds DroidBridge and creates DroidBridge.app in the current folder.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -30,7 +30,7 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 </plist>
 PLIST
 
-# Icona dell'app: ricava AppIcon.icns da Resources/AppIcon.png (1024x1024) con gli strumenti di macOS
+# App icon: builds AppIcon.icns from Resources/AppIcon.png (1024x1024) with the macOS tools
 if [ -f Resources/AppIcon.png ]; then
     ICONSET="$(mktemp -d)/AppIcon.iconset"
     mkdir -p "$ICONSET"
@@ -42,11 +42,11 @@ if [ -f Resources/AppIcon.png ]; then
     rm -rf "$(dirname "$ICONSET")"
 fi
 
-# Firma ad-hoc, sufficiente per usarla sul proprio Mac
+# Ad-hoc signature, enough to use it on your own Mac
 codesign --force --deep --sign - "$APP"
 
-# Aggiorna la data del pacchetto così Finder e Dock mostrano subito la nuova icona
+# Touch the bundle so Finder and the Dock show the new icon right away
 touch "$APP"
 
-echo "Fatto: $(pwd)/$APP"
-echo "Apri con: open \"$APP\""
+echo "Done: $(pwd)/$APP"
+echo "Open with: open \"$APP\""

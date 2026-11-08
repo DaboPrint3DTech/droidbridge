@@ -2,8 +2,8 @@ import AppKit
 import ImageIO
 import UniformTypeIdentifiers
 
-/// Scarica le immagini dal telefono, le ridimensiona e le tiene in cache
-/// (memoria + disco in ~/Library/Caches/DroidBridge).
+/// Downloads images from the phone, resizes them and caches them
+/// (in memory + on disk in ~/Library/Caches/DroidBridge).
 actor RemoteImageLoader {
     static let shared = RemoteImageLoader()
 
@@ -42,7 +42,7 @@ actor RemoteImageLoader {
         defer { release() }
         if Task.isCancelled { return nil }
 
-        // Nel frattempo un'altra richiesta potrebbe aver già creato il file.
+        // Another request may have created the file in the meantime.
         if let cached = NSImage(contentsOf: file) {
             memory.setObject(cached, forKey: key as NSString)
             return cached
@@ -60,7 +60,7 @@ actor RemoteImageLoader {
         try? FileManager.default.removeItem(at: cacheRoot)
     }
 
-    // MARK: - Limite di richieste contemporanee
+    // MARK: - Concurrent request limit
 
     private func acquire(urgent: Bool) async {
         if running < maxConcurrent {
@@ -86,7 +86,7 @@ actor RemoteImageLoader {
         }
     }
 
-    // MARK: - Generazione (fuori dall'actor)
+    // MARK: - Generation (outside the actor)
 
     private static func generate(serial: String, item: RemoteItem, maxPixel: Int,
                                  destination: URL, png: Bool) async -> Bool {
@@ -124,7 +124,7 @@ actor RemoteImageLoader {
         }
     }
 
-    /// Hash stabile tra un avvio e l'altro (Hasher di Swift non lo è).
+    /// Hash that is stable across launches (Swift's Hasher is not).
     private func stableHash(_ s: String) -> String {
         var h: UInt64 = 0xcbf29ce484222325
         for b in s.utf8 {

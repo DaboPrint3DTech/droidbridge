@@ -1,9 +1,9 @@
 import SwiftUI
 import AppKit
 
-/// Mostra un'immagine che si trova sul telefono. Il caricamento parte quando la vista
-/// compare ed è annullato se esce dallo schermo, così scorrendo si scaricano solo le
-/// anteprime davvero visibili.
+/// Shows an image stored on the phone. Loading starts when the view appears and is
+/// cancelled when it scrolls off screen, so only the thumbnails actually visible
+/// get downloaded.
 struct RemoteImageView: View {
     let serial: String
     let item: RemoteItem

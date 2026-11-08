@@ -1,8 +1,8 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Le miniature si generano a una sola risoluzione per tutte le viste: così ogni immagine
-/// viene scaricata dal telefono una volta sola e poi riusata dalla cache.
+/// Thumbnails are generated at a single resolution for every view, so each image
+/// is downloaded from the phone only once and then reused from the cache.
 private let thumbPixels = 480
 private let galleryPixels = 2400
 
@@ -25,7 +25,7 @@ struct ContentView: View {
             }
         }
         .onAppear { vm.start() }
-        .alert("Errore", isPresented: Binding(
+        .alert("Error", isPresented: Binding(
             get: { vm.errorMessage != nil },
             set: { if !$0 { vm.errorMessage = nil } }
         )) {
@@ -35,15 +35,15 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - Barra laterale
+    // MARK: - Sidebar
 
     private var sidebar: some View {
         List(selection: Binding<String?>(
             get: { vm.selectedSerial },
-            // Le righe dell'albero non hanno tag: un clic su di esse non deve deselezionare il telefono.
+            // Tree rows have no tag: clicking them must not deselect the phone.
             set: { if let serial = $0 { vm.select(serial) } }
         )) {
-            Section("Dispositivi") {
+            Section("Devices") {
                 ForEach(vm.devices) { device in
                     Label {
                         VStack(alignment: .leading, spacing: 2) {
@@ -59,7 +59,7 @@ struct ContentView: View {
                     }
                     .tag(device.serial as String?)
 
-                    // Alberatura delle cartelle, sotto il telefono selezionato
+                    // Folder tree, under the selected phone
                     if device.serial == vm.selectedSerial {
                         ForEach(vm.treeRows) { row in
                             treeRow(row)
@@ -71,7 +71,7 @@ struct ContentView: View {
         .safeAreaInset(edge: .bottom) { aboutButton }
         .overlay {
             if vm.devices.isEmpty {
-                Text("Nessun dispositivo")
+                Text("No devices")
                     .foregroundStyle(.secondary)
             }
         }
@@ -120,7 +120,7 @@ struct ContentView: View {
             Button {
                 openWindow(id: "about")
             } label: {
-                Label("Informazioni su \(AppInfo.name) \(AppInfo.version)", systemImage: "info.circle")
+                Label("About \(AppInfo.name) \(AppInfo.version)", systemImage: "info.circle")
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .buttonStyle(.plain)
@@ -131,13 +131,13 @@ struct ContentView: View {
 
     private func stateDescription(_ state: String) -> String {
         switch state {
-        case "unauthorized": return "Autorizza il Mac sul telefono"
+        case "unauthorized": return "Allow this Mac on the phone"
         case "offline": return "Offline"
         default: return state
         }
     }
 
-    // MARK: - Dettaglio
+    // MARK: - Detail
 
     @ViewBuilder
     private var detail: some View {
@@ -161,7 +161,7 @@ struct ContentView: View {
             Divider()
             statusBar(shown)
         }
-        .searchable(text: $vm.searchText, placement: .toolbar, prompt: "Filtra per nome")
+        .searchable(text: $vm.searchText, placement: .toolbar, prompt: "Filter by name")
         .toolbar { toolbarContent }
     }
 
@@ -196,13 +196,13 @@ struct ContentView: View {
     private func emptyState(_ shown: [RemoteItem]) -> some View {
         if shown.isEmpty && vm.viewMode != .gallery && vm.busyMessage == nil {
             if vm.items.isEmpty {
-                Text("Cartella vuota")
+                Text("Empty folder")
                     .foregroundStyle(.secondary)
             } else {
                 VStack(spacing: 8) {
-                    Text("Nessun elemento corrisponde ai filtri")
+                    Text("No items match the filters")
                         .foregroundStyle(.secondary)
-                    Button("Azzera filtri") {
+                    Button("Clear Filters") {
                         vm.searchText = ""
                         vm.filter = .all
                     }
@@ -211,27 +211,27 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - Vista a elenco
+    // MARK: - List view
 
     private func listView(_ shown: [RemoteItem], serial: String) -> some View {
         Table(shown, selection: $vm.selection, sortOrder: $vm.sortOrder) {
-            TableColumn("Nome", value: \RemoteItem.sortName) { item in
+            TableColumn("Name", value: \RemoteItem.sortName) { item in
                 HStack(spacing: 6) {
                     itemIcon(item, serial: serial, side: 22)
                     Text(item.name).lineLimit(1)
                 }
             }
-            TableColumn("Dimensione", value: \RemoteItem.size) { item in
+            TableColumn("Size", value: \RemoteItem.size) { item in
                 Text(item.isDirectory ? "—" : formattedSize(item.size))
                     .foregroundStyle(.secondary)
             }
             .width(min: 70, ideal: 90, max: 120)
-            TableColumn("Tipo", value: \RemoteItem.typeLabel) { item in
+            TableColumn("Kind", value: \RemoteItem.typeLabel) { item in
                 Text(item.typeLabel)
                     .foregroundStyle(.secondary)
             }
             .width(min: 60, ideal: 80, max: 120)
-            TableColumn("Modificato", value: \RemoteItem.modified) { item in
+            TableColumn("Modified", value: \RemoteItem.modified) { item in
                 Text(item.modified)
                     .foregroundStyle(.secondary)
             }
@@ -247,13 +247,13 @@ struct ContentView: View {
     @ViewBuilder
     private func tableMenu(_ ids: Set<RemoteItem.ID>) -> some View {
         if ids.count == 1 {
-            Button("Apri") { vm.open(ids: ids) }
-            Button("Rinomina…") { vm.renameSelection() }
+            Button("Open") { vm.open(ids: ids) }
+            Button("Rename…") { vm.renameSelection() }
         }
         if !ids.isEmpty {
-            Button("Scarica sul Mac…") { vm.downloadSelectionWithPanel() }
+            Button("Download to Mac…") { vm.downloadSelectionWithPanel() }
             Divider()
-            Button("Elimina…", role: .destructive) { vm.deleteSelection() }
+            Button("Delete…", role: .destructive) { vm.deleteSelection() }
         }
     }
 
@@ -270,7 +270,7 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - Vista a griglia
+    // MARK: - Grid view
 
     private func gridView(_ shown: [RemoteItem], serial: String) -> some View {
         ScrollView {
@@ -328,17 +328,17 @@ struct ContentView: View {
         .onTapGesture(count: 2) { vm.open(ids: [item.id]) }
         .onTapGesture { handleTap(item, in: shown) }
         .contextMenu {
-            Button("Apri") { vm.open(ids: [item.id]) }
-            Button("Rinomina…") {
+            Button("Open") { vm.open(ids: [item.id]) }
+            Button("Rename…") {
                 vm.selection = [item.id]
                 vm.renameSelection()
             }
-            Button("Scarica sul Mac…") {
+            Button("Download to Mac…") {
                 ensureSelected(item)
                 vm.downloadSelectionWithPanel()
             }
             Divider()
-            Button("Elimina…", role: .destructive) {
+            Button("Delete…", role: .destructive) {
                 ensureSelected(item)
                 vm.deleteSelection()
             }
@@ -352,7 +352,7 @@ struct ContentView: View {
         }
     }
 
-    /// Clic singolo: ⌘ aggiunge o toglie dalla selezione, ⇧ seleziona un intervallo.
+    /// Single click: ⌘ adds to or removes from the selection, ⇧ selects a range.
     private func handleTap(_ item: RemoteItem, in shown: [RemoteItem]) {
         let flags = NSEvent.modifierFlags
         if flags.contains(.command) {
@@ -373,7 +373,7 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - Galleria
+    // MARK: - Gallery
 
     private func galleryView(_ shown: [RemoteItem], serial: String) -> some View {
         let images = shown.filter { $0.kind == .image }
@@ -388,7 +388,7 @@ struct ContentView: View {
                 if let item = current {
                     galleryStage(item, serial: serial)
                 } else {
-                    Text("Nessuna immagine in questa cartella")
+                    Text("No images in this folder")
                         .foregroundStyle(.secondary)
                 }
                 HStack {
@@ -410,7 +410,7 @@ struct ContentView: View {
     private func galleryStage(_ item: RemoteItem, serial: String) -> some View {
         if item.kind == .image {
             ZStack {
-                // L'anteprima piccola compare subito, l'immagine grande la sostituisce appena è pronta.
+                // The small thumbnail shows up at once; the large image replaces it as soon as it is ready.
                 RemoteImageView(serial: serial, item: item, maxPixel: thumbPixels, contentMode: .fit)
                 RemoteImageView(serial: serial, item: item, maxPixel: galleryPixels,
                                 urgent: true, contentMode: .fit, showsPlaceholder: false)
@@ -423,7 +423,7 @@ struct ContentView: View {
                     .font(.system(size: 64))
                     .foregroundStyle(.secondary)
                 Text(item.name).font(.headline)
-                Text("Anteprima non disponibile per questo tipo di file")
+                Text("No preview available for this file type")
                     .foregroundStyle(.secondary)
             }
         }
@@ -455,7 +455,7 @@ struct ContentView: View {
             }
             Spacer()
             if let position {
-                Text("\(position + 1) di \(total)")
+                Text("\(position + 1) of \(total)")
                     .foregroundStyle(.secondary)
             }
         }
@@ -509,7 +509,7 @@ struct ContentView: View {
         .help(item.name)
     }
 
-    // MARK: - Barra di stato
+    // MARK: - Status bar
 
     private func statusBar(_ shown: [RemoteItem]) -> some View {
         HStack(spacing: 12) {
@@ -525,12 +525,12 @@ struct ContentView: View {
                     .foregroundStyle(.secondary)
             }
             if vm.viewMode != .gallery {
-                Toggle("Anteprime", isOn: $vm.showPreview)
+                Toggle("Previews", isOn: $vm.showPreview)
                     .toggleStyle(.switch)
                     .controlSize(.small)
             }
             Menu {
-                Button("Svuota cache anteprime") { vm.clearPreviewCache() }
+                Button("Clear Preview Cache") { vm.clearPreviewCache() }
             } label: {
                 Image(systemName: "ellipsis.circle")
             }
@@ -543,82 +543,82 @@ struct ContentView: View {
     }
 
     private func statusText(_ shown: [RemoteItem]) -> String {
-        var text = "\(shown.count) \(shown.count == 1 ? "elemento" : "elementi")"
+        var text = "\(shown.count) \(shown.count == 1 ? "item" : "items")"
         if shown.count != vm.items.count {
-            text += " (di \(vm.items.count))"
+            text += " (of \(vm.items.count))"
         }
         let selected = vm.selectedItems.count
         if selected > 0 {
-            text += " · \(selected) \(selected == 1 ? "selezionato" : "selezionati")"
+            text += " · \(selected) selected"
         }
         return text
     }
 
-    // MARK: - Barra degli strumenti
+    // MARK: - Toolbar
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .navigation) {
             Button { vm.goUp() } label: { Image(systemName: "chevron.up") }
-                .help("Cartella superiore")
+                .help("Enclosing folder")
                 .disabled(vm.path == "/")
             Button { vm.load() } label: { Image(systemName: "arrow.clockwise") }
-                .help("Aggiorna")
+                .help("Refresh")
         }
         ToolbarItemGroup {
-            Picker("Vista", selection: $vm.viewMode) {
+            Picker("View", selection: $vm.viewMode) {
                 ForEach(ViewMode.allCases) { mode in
                     Label(mode.label, systemImage: mode.symbol).tag(mode)
                 }
             }
             .pickerStyle(.segmented)
             .labelStyle(.iconOnly)
-            .help("Lista, griglia o galleria")
+            .help("List, grid or gallery")
 
             Menu {
-                Picker("Mostra", selection: $vm.filter) {
+                Picker("Show", selection: $vm.filter) {
                     ForEach(ItemFilter.allCases) { option in
                         Text(option.label).tag(option)
                     }
                 }
                 .pickerStyle(.inline)
             } label: {
-                Label("Filtra per tipo",
+                Label("Filter by Kind",
                       systemImage: vm.filter == .all
                         ? "line.3.horizontal.decrease.circle"
                         : "line.3.horizontal.decrease.circle.fill")
             }
-            .help("Mostra solo un tipo di elementi")
+            .help("Show only one kind of item")
 
             Menu {
-                sortButton("Nome", \RemoteItem.sortName)
-                sortButton("Dimensione", \RemoteItem.size)
-                sortButton("Tipo", \RemoteItem.typeLabel)
-                sortButton("Data di modifica", \RemoteItem.modified)
+                sortButton("Name", \RemoteItem.sortName)
+                sortButton("Size", \RemoteItem.size)
+                sortButton("Kind", \RemoteItem.typeLabel)
+                sortButton("Date Modified", \RemoteItem.modified)
                 Divider()
-                Toggle("Cartelle per prime", isOn: $vm.foldersFirst)
+                Toggle("Folders First", isOn: $vm.foldersFirst)
             } label: {
-                Label("Ordina", systemImage: "arrow.up.arrow.down")
+                Label("Sort", systemImage: "arrow.up.arrow.down")
             }
-            .help("Ordina gli elementi (in elenco puoi anche cliccare le intestazioni)")
+            .help("Sort items (in the list you can also click the column headers)")
 
             Button { vm.uploadWithPanel() } label: {
-                Label("Invia", systemImage: "square.and.arrow.up")
+                Label("Send", systemImage: "square.and.arrow.up")
             }
-            .help("Invia file al telefono (puoi anche trascinarli nella finestra)")
+            .help("Send files to the phone (you can also drag them into the window)")
 
             Button { vm.downloadSelectionWithPanel() } label: {
-                Label("Scarica", systemImage: "square.and.arrow.down")
+                Label("Download", systemImage: "square.and.arrow.down")
             }
-            .help("Scarica gli elementi selezionati sul Mac")
+            .help("Download the selected items to the Mac")
             .disabled(vm.selection.isEmpty)
 
             Button { vm.newFolder() } label: {
-                Label("Nuova cartella", systemImage: "folder.badge.plus")
+                Label("New Folder", systemImage: "folder.badge.plus")
             }
 
             Button { vm.deleteSelection() } label: {
-                Label("Elimina", systemImage: "trash")
+                Label("Delete", systemImage: "trash")
             }
             .disabled(vm.selection.isEmpty)
         }
@@ -640,7 +640,7 @@ struct ContentView: View {
         ByteCountFormatter.string(fromByteCount: bytes, countStyle: .file)
     }
 
-    // MARK: - Drag & drop (Mac → telefono)
+    // MARK: - Drag & drop (Mac → phone)
 
     private func handleDrop(_ providers: [NSItemProvider]) -> Bool {
         let collector = URLCollector()
@@ -667,7 +667,7 @@ struct ContentView: View {
     }
 }
 
-/// Raccoglie gli URL dai callback (che possono arrivare su thread diversi).
+/// Collects URLs from the callbacks (which may arrive on different threads).
 private final class URLCollector: @unchecked Sendable {
     private let lock = NSLock()
     private var urls: [URL] = []
@@ -685,7 +685,7 @@ private final class URLCollector: @unchecked Sendable {
     }
 }
 
-// MARK: - Schermate di stato
+// MARK: - Status screens
 
 struct AdbMissingView: View {
     var body: some View {
@@ -693,18 +693,18 @@ struct AdbMissingView: View {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 42))
                 .foregroundStyle(.orange)
-            Text("adb non è installato")
+            Text("adb is not installed")
                 .font(.title2.bold())
-            Text("DroidBridge usa Android Debug Bridge per parlare con il telefono.\nInstallalo da Terminale con:")
+            Text("DroidBridge uses Android Debug Bridge to talk to the phone.\nInstall it from Terminal with:")
                 .multilineTextAlignment(.center)
             Text("brew install android-platform-tools")
                 .font(.system(.body, design: .monospaced))
                 .padding(8)
                 .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
                 .textSelection(.enabled)
-            Text("Oppure scarica le Platform-Tools da Google e copia il file adb in /usr/local/bin.")
+            Text("Or download Platform-Tools from Google and copy the adb file to /usr/local/bin.")
                 .foregroundStyle(.secondary)
-            Text("Poi riapri l'app.")
+            Text("Then reopen the app.")
                 .foregroundStyle(.secondary)
         }
         .padding(40)
@@ -719,12 +719,12 @@ struct NoDeviceView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
-            Text("Collega il tuo telefono Android")
+            Text("Connect your Android phone")
                 .font(.title2.bold())
             VStack(alignment: .leading, spacing: 6) {
-                Text("1. Sul telefono: Impostazioni → Info sul telefono → tocca 7 volte “Numero build”.")
-                Text("2. Impostazioni → Opzioni sviluppatore → attiva “Debug USB”.")
-                Text("3. Collega il cavo USB e accetta la richiesta “Consenti debug USB”.")
+                Text("1. On the phone: Settings → About phone → tap “Build number” 7 times.")
+                Text("2. Settings → Developer options → turn on “USB debugging”.")
+                Text("3. Plug in the USB cable and accept the “Allow USB debugging” prompt.")
             }
             .foregroundStyle(.secondary)
         }
