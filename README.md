@@ -12,13 +12,38 @@ App nativa per macOS (SwiftUI) per sfogliare lo storage di un telefono Android e
 ## Compilare e avviare
 
 ```bash
-cd DroidBridge
+git clone https://github.com/DaboPrint3DTech/droidbridge.git
+cd droidbridge
 chmod +x build.sh
 ./build.sh
 open DroidBridge.app
 ```
 
 In alternativa: `swift run` dalla cartella del progetto.
+
+## Installare l'app (Launchpad, Dock, Spotlight)
+
+`build.sh` crea `DroidBridge.app` nella cartella del progetto. Per averla nel Launchpad come le altre app, copiala in `/Applications`:
+
+```bash
+./build.sh
+rm -rf /Applications/DroidBridge.app
+ditto DroidBridge.app /Applications/DroidBridge.app
+```
+
+Dopo qualche secondo DroidBridge compare nel Launchpad; si trova anche con Spotlight (⌘-spazio, "DroidBridge"). Per tenerla nel Dock: aprila, clic destro sull'icona nel Dock → Opzioni → Mantieni nel Dock.
+
+Se l'icona non compare subito, forza la registrazione dell'app:
+
+```bash
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/DroidBridge.app
+```
+
+**Aggiornare:** dopo ogni modifica al codice la copia in `/Applications` non cambia da sola. Rilancia i tre comandi sopra (compila, rimuovi la vecchia, copia la nuova).
+
+**Disinstallare:** `rm -rf /Applications/DroidBridge.app` (le miniature in cache restano in `~/Library/Caches/DroidBridge`, cancellabili a mano).
+
+L'app è firmata ad-hoc, quindi è pensata per il Mac su cui la compili. Se la copi su un altro Mac, al primo avvio macOS può bloccarla: clic destro sull'app → Apri, oppure Impostazioni di Sistema → Privacy e sicurezza → Apri comunque.
 
 ## Uso
 
