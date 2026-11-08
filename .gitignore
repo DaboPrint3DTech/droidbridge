@@ -5,3 +5,6 @@ DroidBridge.app/
 *.xcodeproj/xcuserdata/
 xcuserdata/
 DerivedData/
+
+# Materiale promozionale (video, script per i video): solo in locale
+promo/
