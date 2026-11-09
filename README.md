@@ -62,7 +62,7 @@ At the bottom of the sidebar there is "About DroidBridge", also available from t
 
 ### Logo and icon
 
-The logo (a smartphone connecting to an iMac) is in `Resources/AppIcon.png` (1024×1024), with the vector source in `Resources/AppIcon.svg`. `build.sh` turns it into `AppIcon.icns` and puts it in the bundle, so it shows in the Dock, in Finder, in the About window and on the "Connect your Android phone" screen. To change it, replace `AppIcon.png` with another 1024 px square image and run `./build.sh` again. With `swift run` the app is not a bundle and shows the generic icon.
+The logo (a smartphone connecting to an iMac, with the orange DaboPrint3D thumbs-up badge in the bottom-right corner, the same one used by GoPro Connector) is in `Resources/AppIcon.png` (1024×1024). The vector source of the artwork without the badge is `Resources/AppIcon.svg`; the badge is drawn on top by `swift tools/add_badge.swift <icon-without-badge.png> Resources/AppIcon.png`. `build.sh` turns it into `AppIcon.icns` and puts it in the bundle, so it shows in the Dock, in Finder, in the About window and on the "Connect your Android phone" screen. To change it, replace `AppIcon.png` with another 1024 px square image and run `./build.sh` again. With `swift run` the app is not a bundle and shows the generic icon.
 
 ### Views
 
